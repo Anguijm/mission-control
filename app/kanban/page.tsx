@@ -3,6 +3,8 @@
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import { useState } from "react";
+import { TaskModal, TaskData } from "@/components/TaskModal";
 
 const COLUMNS = [
   { id: "todo", label: "To Do", color: "bg-blue-500/10 border-blue-500/20" },
@@ -19,14 +21,51 @@ const PRIORITY_COLORS: Record<string, string> = {
 
 export default function KanbanPage() {
   const tasks = useQuery(api.kanban.list, {});
-  const updateStatus = useMutation(api.kanban.updateStatus);
+  const createTask = useMutation(api.kanban.create);
+  const updateTask = useMutation(api.kanban.update);
+  const deleteTask = useMutation(api.kanban.delete_);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingTask, setEditingTask] = useState<TaskData | null>(null);
 
   if (tasks === undefined) {
     return <div className="p-8 text-zinc-500">Loading board...</div>;
   }
 
-  const handleStatusChange = async (id: Id<"kanbanTasks">, newStatus: string) => {
-    await updateStatus({ id, status: newStatus });
+  const handleCreate = async (data: TaskData) => {
+    await createTask({
+      title: data.title,
+      description: data.description,
+      status: data.status,
+      priority: data.priority,
+      tags: data.tags,
+    });
+  };
+
+  const handleUpdate = async (data: TaskData) => {
+    if (!data._id) return;
+    await updateTask({
+      id: data._id,
+      title: data.title,
+      description: data.description,
+      status: data.status,
+      priority: data.priority,
+      tags: data.tags,
+    });
+  };
+
+  const handleDelete = async (id: Id<"kanbanTasks">) => {
+    await deleteTask({ id });
+  };
+
+  const openNewTask = () => {
+    setEditingTask(null);
+    setIsModalOpen(true);
+  };
+
+  const openEditTask = (task: any) => {
+    setEditingTask(task);
+    setIsModalOpen(true);
   };
 
   return (
@@ -34,10 +73,18 @@ export default function KanbanPage() {
       <div className="mb-6 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-zinc-100">Mission Board</h1>
-          <p className="text-zinc-500 mt-1">Synced with Notion</p>
+          <p className="text-zinc-500 mt-1">Autonomous Task Tracking</p>
         </div>
-        <div className="text-sm text-zinc-600">
-          {tasks.length} tasks
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-zinc-600">
+            {tasks.length} tasks
+          </div>
+          <button
+            onClick={openNewTask}
+            className="bg-blue-600 hover:bg-blue-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors flex items-center gap-2"
+          >
+            <span>+</span> New Task
+          </button>
         </div>
       </div>
 
@@ -58,7 +105,8 @@ export default function KanbanPage() {
                 {colTasks.map((task) => (
                   <div
                     key={task._id}
-                    className="bg-zinc-900 border border-zinc-800 p-3 rounded-lg shadow-sm hover:border-zinc-700 transition-colors group"
+                    onClick={() => openEditTask(task)}
+                    className="bg-zinc-900 border border-zinc-800 p-3 rounded-lg shadow-sm hover:border-zinc-600 cursor-pointer transition-colors group"
                   >
                     <div className="flex justify-between items-start gap-2 mb-2">
                       <h3 className="text-sm font-medium text-zinc-200 leading-tight">
@@ -71,10 +119,11 @@ export default function KanbanPage() {
                         {task.priority}
                       </span>
                       
-                      {/* Simple Move Dropdown */}
+                      {/* Quick Status Move (Stop propagation to avoid opening modal) */}
                       <select
                         value={task.status}
-                        onChange={(e) => handleStatusChange(task._id, e.target.value)}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => updateTask({ id: task._id, status: e.target.value })}
                         className="bg-zinc-950 border border-zinc-800 text-xs text-zinc-500 rounded px-1 py-0.5 focus:outline-none focus:border-zinc-700 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         {COLUMNS.map(c => (
@@ -83,9 +132,13 @@ export default function KanbanPage() {
                       </select>
                     </div>
                     
-                    {task.assignedTo && (
-                      <div className="mt-2 pt-2 border-t border-zinc-800 flex justify-end">
-                        <span className="text-xs text-zinc-500">{task.assignedTo}</span>
+                    {task.tags && task.tags.length > 0 && (
+                      <div className="mt-2 flex flex-wrap gap-1">
+                        {task.tags.slice(0, 3).map(tag => (
+                          <span key={tag} className="text-[10px] text-zinc-500 bg-zinc-800/50 px-1 rounded">
+                            #{tag}
+                          </span>
+                        ))}
                       </div>
                     )}
                   </div>
@@ -95,6 +148,14 @@ export default function KanbanPage() {
           );
         })}
       </div>
+
+      <TaskModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={editingTask ? handleUpdate : handleCreate}
+        onDelete={editingTask ? handleDelete : undefined}
+        initialData={editingTask}
+      />
     </div>
   );
 }
