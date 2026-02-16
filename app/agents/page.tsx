@@ -1,53 +1,36 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
-// Agent Data Interface
+// Agent Data Interface (matching Convex schema)
 interface Agent {
-  id: string;
+  _id: Id<"agents">;
   name: string;
   role: string;
   emoji: string;
-  status: "online" | "offline" | "working";
-  task: string;
+  status: string;
+  task?: string;
   cpu?: number;
   ram?: number;
+  lastSeen: number;
 }
 
 export default function AgentsPage() {
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [loading, setLoading] = useState(true);
+  const agents = useQuery(api.agents.list);
 
-  useEffect(() => {
-    // Fetch agent status from our Next.js API route
-    const fetchAgents = async () => {
-      try {
-        const res = await fetch('/api/agents', { cache: 'no-store' });
-        if (res.ok) {
-          const data = await res.json();
-          setAgents(data.agents);
-        }
-      } catch (err) {
-        console.error("Failed to fetch agent status", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchAgents();
-    
-    // Poll every 5 seconds for updates
-    const interval = setInterval(fetchAgents, 5000);
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
+  if (agents === undefined) {
     return (
       <div className="p-8 max-w-7xl mx-auto text-zinc-500">
         Loading Agent Grid...
       </div>
     );
   }
+
+  // Sort agents by name or status if needed. 
+  // For now, let's keep them in the order Convex returns (or sort by name).
+  const sortedAgents = [...agents].sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
@@ -57,26 +40,27 @@ export default function AgentsPage() {
           <p className="text-zinc-500 mt-1">Live Status & Resource Monitoring</p>
         </div>
         <div className="text-sm font-mono text-zinc-600">
-          Updated: {new Date().toLocaleTimeString()}
+          Live Connection
         </div>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {agents.map((agent) => (
+        {sortedAgents.map((agent) => (
           <AgentCard 
-            key={agent.id}
+            key={agent._id}
             name={agent.name} 
             role={agent.role} 
             emoji={agent.emoji} 
             data={agent} 
+            // Simple heuristic for color coding based on name/role
             color={
-              agent.id === 'main' ? "border-red-500/50" :
-              agent.id === 'engineer' ? "border-blue-500/50" :
-              agent.id === 'researcher' ? "border-green-500/50" :
-              agent.id === 'relations' ? "border-pink-500/50" :
-              agent.id === 'hr' ? "border-purple-500/50" :
-              agent.id === 'radar' ? "border-orange-500/50" :
-              agent.id === 'archive' ? "border-amber-700/50" :
+              agent.name === 'Circus' ? "border-red-500/50" :
+              agent.name === 'Bolt' ? "border-blue-500/50" :
+              agent.name === 'Scope' ? "border-green-500/50" :
+              agent.name === 'Beau' ? "border-pink-500/50" :
+              agent.name === 'Scout' ? "border-purple-500/50" :
+              agent.name === 'Radar' ? "border-orange-500/50" :
+              agent.name === 'Archive' ? "border-amber-700/50" :
               "border-yellow-500/50"
             }
           />
@@ -88,6 +72,8 @@ export default function AgentsPage() {
 
 function AgentCard({ name, role, emoji, data, color }: { name: string, role: string, emoji: string, data: Agent, color: string }) {
   const isOnline = data.status !== "offline";
+  // Add a "stale" check? If lastSeen > 1 minute ago, maybe they crashed.
+  const isStale = Date.now() - data.lastSeen > 60000;
   
   return (
     <div className={`bg-zinc-900 rounded-xl p-5 border border-zinc-800 ${color} shadow-sm transition-all duration-300 hover:border-zinc-700 hover:scale-[1.02]`}>
@@ -100,11 +86,12 @@ function AgentCard({ name, role, emoji, data, color }: { name: string, role: str
           </div>
         </div>
         <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${
+          isStale ? "bg-red-900/30 text-red-400" :
           data.status === "working" ? "bg-emerald-500/20 text-emerald-400 animate-pulse" :
           data.status === "online" ? "bg-blue-500/20 text-blue-400" :
           "bg-zinc-700/30 text-zinc-500"
         }`}>
-          {data.status}
+          {isStale ? "TIMEOUT" : data.status}
         </div>
       </div>
 
@@ -114,7 +101,7 @@ function AgentCard({ name, role, emoji, data, color }: { name: string, role: str
           <p className="text-sm text-zinc-300 truncate font-medium">{data.task || "Idle"}</p>
         </div>
 
-        {isOnline && (
+        {isOnline && !isStale && (
           <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-800/50">
             <div className="bg-zinc-950/50 rounded p-2 text-center">
               <span className="text-[10px] text-zinc-500 block uppercase">CPU</span>
