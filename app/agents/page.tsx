@@ -14,7 +14,7 @@ interface Agent {
   ram?: number;
 }
 
-export default function AgentDashboard() {
+export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -43,15 +43,23 @@ export default function AgentDashboard() {
 
   if (loading) {
     return (
-      <div className="p-8 max-w-7xl mx-auto text-white">
-        Loading Command Center...
+      <div className="p-8 max-w-7xl mx-auto text-zinc-500">
+        Loading Agent Grid...
       </div>
     );
   }
 
   return (
     <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-4xl font-bold mb-8 text-white">Agent Command Center 🎪 (Live)</h1>
+      <div className="mb-8 flex justify-between items-end">
+        <div>
+          <h1 className="text-3xl font-bold text-zinc-100">Agents</h1>
+          <p className="text-zinc-500 mt-1">Live Status & Resource Monitoring</p>
+        </div>
+        <div className="text-sm font-mono text-zinc-600">
+          Updated: {new Date().toLocaleTimeString()}
+        </div>
+      </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {agents.map((agent) => (
@@ -62,26 +70,17 @@ export default function AgentDashboard() {
             emoji={agent.emoji} 
             data={agent} 
             color={
-              agent.id === 'main' ? "border-red-500" :
-              agent.id === 'engineer' ? "border-blue-500" :
-              agent.id === 'researcher' ? "border-green-500" :
-              agent.id === 'relations' ? "border-pink-500" :
-              agent.id === 'hr' ? "border-purple-500" :
-              agent.id === 'radar' ? "border-orange-500" :
-              agent.id === 'archive' ? "border-amber-700" :
-              "border-yellow-500"
+              agent.id === 'main' ? "border-red-500/50" :
+              agent.id === 'engineer' ? "border-blue-500/50" :
+              agent.id === 'researcher' ? "border-green-500/50" :
+              agent.id === 'relations' ? "border-pink-500/50" :
+              agent.id === 'hr' ? "border-purple-500/50" :
+              agent.id === 'radar' ? "border-orange-500/50" :
+              agent.id === 'archive' ? "border-amber-700/50" :
+              "border-yellow-500/50"
             }
           />
         ))}
-      </div>
-
-      <div className="mt-12">
-        <h2 className="text-2xl font-bold mb-4 text-gray-300">Live Communication Log</h2>
-        <div className="bg-gray-900 rounded-lg p-4 font-mono text-sm h-64 overflow-y-auto border border-gray-700">
-          <p className="text-yellow-400">[Today] Tempo → Main: Automated Standup Complete</p>
-          <p className="text-green-400">[Today] Scope → Main: NotebookLM Research Complete</p>
-          <p className="text-blue-400">[Today] Bolt → Main: nlm CLI Patched</p>
-        </div>
       </div>
     </div>
   );
@@ -91,37 +90,39 @@ function AgentCard({ name, role, emoji, data, color }: { name: string, role: str
   const isOnline = data.status !== "offline";
   
   return (
-    <div className={`bg-gray-800 rounded-xl p-6 border-l-4 ${color} shadow-lg transition-all duration-300 hover:scale-105`}>
+    <div className={`bg-zinc-900 rounded-xl p-5 border border-zinc-800 ${color} shadow-sm transition-all duration-300 hover:border-zinc-700 hover:scale-[1.02]`}>
       <div className="flex justify-between items-start mb-4">
-        <div>
-          <div className="text-3xl mb-1">{emoji}</div>
-          <h3 className="text-xl font-bold text-white">{name}</h3>
-          <p className="text-gray-400 text-sm">{role}</p>
+        <div className="flex items-center gap-3">
+          <div className="text-3xl bg-zinc-800/50 p-2 rounded-lg">{emoji}</div>
+          <div>
+            <h3 className="text-lg font-bold text-zinc-100">{name}</h3>
+            <p className="text-zinc-500 text-xs font-medium uppercase tracking-wider">{role}</p>
+          </div>
         </div>
-        <div className={`px-2 py-1 rounded text-xs font-bold uppercase ${
-          data.status === "working" ? "bg-green-900 text-green-300 animate-pulse" :
-          data.status === "online" ? "bg-blue-900 text-blue-300" :
-          "bg-gray-700 text-gray-400"
+        <div className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${
+          data.status === "working" ? "bg-emerald-500/20 text-emerald-400 animate-pulse" :
+          data.status === "online" ? "bg-blue-500/20 text-blue-400" :
+          "bg-zinc-700/30 text-zinc-500"
         }`}>
           {data.status}
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-4">
         <div>
-          <label className="text-xs text-gray-500 uppercase">Current Task</label>
-          <p className="text-sm text-gray-200 truncate">{data.task}</p>
+          <label className="text-[10px] font-semibold text-zinc-600 uppercase block mb-1">Current Task</label>
+          <p className="text-sm text-zinc-300 truncate font-medium">{data.task || "Idle"}</p>
         </div>
 
         {isOnline && (
-          <div className="grid grid-cols-2 gap-2 mt-4">
-            <div className="bg-gray-700 rounded p-2">
-              <span className="text-xs text-gray-400 block">CPU</span>
-              <span className="text-lg font-mono text-white">{data.cpu || 0}%</span>
+          <div className="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-800/50">
+            <div className="bg-zinc-950/50 rounded p-2 text-center">
+              <span className="text-[10px] text-zinc-500 block uppercase">CPU</span>
+              <span className="text-sm font-mono text-zinc-300">{data.cpu || 0}%</span>
             </div>
-            <div className="bg-gray-700 rounded p-2">
-              <span className="text-xs text-gray-400 block">RAM</span>
-              <span className="text-lg font-mono text-white">{data.ram || 0}%</span>
+            <div className="bg-zinc-950/50 rounded p-2 text-center">
+              <span className="text-[10px] text-zinc-500 block uppercase">RAM</span>
+              <span className="text-sm font-mono text-zinc-300">{data.ram || 0}%</span>
             </div>
           </div>
         )}
