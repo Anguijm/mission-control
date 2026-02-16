@@ -52,9 +52,11 @@ export default defineSchema({
     ),
     createdAt: v.number(),
     updatedAt: v.number(),
+    notionId: v.optional(v.string()),
   })
     .index("by_status", ["status"])
-    .index("by_priority", ["priority"]),
+    .index("by_priority", ["priority"])
+    .index("by_notionId", ["notionId"]),
 
   documents: defineTable({
     source: v.string(),

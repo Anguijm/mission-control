@@ -7,6 +7,7 @@ const navItems = [
   { href: "/", label: "Dashboard", icon: "📊" },
   { href: "/activity", label: "Activity", icon: "⚡" },
   { href: "/calendar", label: "Calendar", icon: "📅" },
+  { href: "/kanban", label: "Board", icon: "📋" },
   { href: "/agents", label: "Agents", icon: "🤖" },
   { href: "/org", label: "Organization", icon: "🏢" },
   { href: "/search", label: "Search", icon: "🔍" },
