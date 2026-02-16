@@ -38,6 +38,51 @@ export const seed = mutation({
       await ctx.db.insert("scheduledTasks", task);
     }
 
+    // Seed Kanban Tasks
+    const kanbanTasks = [
+      {
+        title: "Implement Activity Feed UI",
+        description: "Create a rich activity feed page (`app/activity/page.tsx`) that shows all `activities` from Convex. Use infinite scroll or pagination.",
+        status: "todo",
+        priority: "high",
+        createdAt: now,
+        updatedAt: now,
+        tags: ["ui", "frontend", "dashboard"],
+      },
+      {
+        title: "Create Agents List Page",
+        description: "Build `app/agents/page.tsx` to list all autonomous agents. Include status indicators and a way to view their logs/history.",
+        status: "todo",
+        priority: "medium",
+        createdAt: now,
+        updatedAt: now,
+        tags: ["ui", "agents"],
+      },
+      {
+        title: "Self-Improvement Loop Logic",
+        description: "Write the logic for the Autonomous PM to analyze failures and update `skills/`. This needs to be a script in `scripts/self-improve.ts`.",
+        status: "todo",
+        priority: "high",
+        createdAt: now,
+        updatedAt: now,
+        tags: ["backend", "autonomous", "script"],
+      },
+      {
+        title: "Integrate GitHub Actions",
+        description: "Set up a CI/CD pipeline for Mission Control. Run tests on every push.",
+        status: "todo",
+        priority: "low",
+        createdAt: now,
+        updatedAt: now,
+        tags: ["devops", "ci"],
+      },
+    ];
+
+    for (const kTask of kanbanTasks) {
+      // @ts-ignore
+      await ctx.db.insert("kanbanTasks", kTask);
+    }
+
     // Seed documents
     const docs = [
       { source: "memory", title: "Long-Term Memory", content: "First boot on 2026-02-14. Mike set me up. Based in Japan (Asia/Tokyo). I am Circus Cruz — walrus-like, Batman cowl, wetsuit, rock-paper-scissors legend. Signal rules: Only text Brooke. No calls. Read-only on all other inbound.", path: "MEMORY.md", updatedAt: now },

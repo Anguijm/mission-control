@@ -29,6 +29,33 @@ export default defineSchema({
     color: v.optional(v.string()),
   }).index("by_nextRun", ["nextRun"]),
 
+  kanbanTasks: defineTable({
+    title: v.string(),
+    description: v.string(),
+    status: v.union(
+      v.literal("todo"),
+      v.literal("in-progress"),
+      v.literal("done"),
+      v.literal("blocked")
+    ),
+    priority: v.union(v.literal("low"), v.literal("medium"), v.literal("high")),
+    assignedTo: v.optional(v.string()),
+    tags: v.optional(v.array(v.string())),
+    comments: v.optional(
+      v.array(
+        v.object({
+          author: v.string(),
+          content: v.string(),
+          timestamp: v.number(),
+        })
+      )
+    ),
+    createdAt: v.number(),
+    updatedAt: v.number(),
+  })
+    .index("by_status", ["status"])
+    .index("by_priority", ["priority"]),
+
   documents: defineTable({
     source: v.string(),
     title: v.string(),

@@ -89,7 +89,7 @@ export default function ActivityPage() {
         ) : activities.length === 0 ? (
           <div className="text-zinc-600 text-sm p-8">No activities found.</div>
         ) : (
-          <div className="space-y-1">
+          <div className="space-y-6">
             {activities.map((a, i) => {
               const { date, time } = formatDateTime(a.timestamp);
               return (
