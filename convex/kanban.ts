@@ -7,16 +7,15 @@ export const list = query({
     project: v.optional(v.string())
   },
   handler: async (ctx, args) => {
-    let q = ctx.db.query("kanbanTasks");
-
+    let tasks;
     if (args.status) {
-      q = q.withIndex("by_status", (q) => q.eq("status", args.status as any));
+      tasks = await ctx.db
+        .query("kanbanTasks")
+        .withIndex("by_status", (q) => q.eq("status", args.status as any))
+        .collect();
+    } else {
+      tasks = await ctx.db.query("kanbanTasks").collect();
     }
-    
-    // Note: Complex filtering in Convex often needs to be done in-memory if not using a specific index
-    // or we can use .filter(). For simple project filtering, .filter() is fine for now.
-    // If scale becomes an issue, we'd add a composite index.
-    let tasks = await q.collect();
 
     if (args.project && args.project !== "all") {
       tasks = tasks.filter(t => t.project === args.project);
