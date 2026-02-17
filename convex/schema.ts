@@ -71,6 +71,37 @@ export default defineSchema({
     lastSeen: v.number(),
   }).index("by_lastSeen", ["lastSeen"]),
 
+  users: defineTable({
+    clerkId: v.string(), // Links to Clerk Auth
+    email: v.string(),
+    name: v.optional(v.string()),
+    plan: v.union(v.literal("free"), v.literal("hero")), // "Local Hero" subscription
+    stripeCustomerId: v.optional(v.string()),
+    createdAt: v.number(),
+    lastLogin: v.number(),
+  }).index("by_clerkId", ["clerkId"]),
+
+  savedHunts: defineTable({
+    userId: v.id("users"),
+    title: v.string(), // e.g. "My Tokyo Coffee Run"
+    locationName: v.string(), // "Shimokitazawa"
+    vibe: v.string(), // "Classic"
+    places: v.array(v.object({
+      name: v.string(),
+      lat: v.number(),
+      lng: v.number(),
+      googleId: v.string(), // Place ID
+    })),
+    assignments: v.array(v.object({
+      text: v.string(),
+      completed: v.boolean(),
+    })),
+    isPublic: v.boolean(), // Shareable link?
+    createdAt: v.number(),
+  })
+    .index("by_user", ["userId"])
+    .index("by_public", ["isPublic"]),
+
   documents: defineTable({
     source: v.string(),
     title: v.string(),
