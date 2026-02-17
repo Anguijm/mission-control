@@ -2,15 +2,27 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
 export const list = query({
-  args: { status: v.optional(v.string()) },
+  args: { 
+    status: v.optional(v.string()),
+    project: v.optional(v.string())
+  },
   handler: async (ctx, args) => {
+    let q = ctx.db.query("kanbanTasks");
+
     if (args.status) {
-      return await ctx.db
-        .query("kanbanTasks")
-        .withIndex("by_status", (q) => q.eq("status", args.status as any))
-        .collect();
+      q = q.withIndex("by_status", (q) => q.eq("status", args.status as any));
     }
-    return await ctx.db.query("kanbanTasks").collect();
+    
+    // Note: Complex filtering in Convex often needs to be done in-memory if not using a specific index
+    // or we can use .filter(). For simple project filtering, .filter() is fine for now.
+    // If scale becomes an issue, we'd add a composite index.
+    let tasks = await q.collect();
+
+    if (args.project && args.project !== "all") {
+      tasks = tasks.filter(t => t.project === args.project);
+    }
+
+    return tasks;
   },
 });
 
@@ -21,6 +33,7 @@ export const create = mutation({
     status: v.string(),
     priority: v.string(),
     tags: v.optional(v.array(v.string())),
+    project: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     return await ctx.db.insert("kanbanTasks", {
@@ -29,6 +42,7 @@ export const create = mutation({
       status: args.status as any,
       priority: args.priority as any,
       tags: args.tags || [],
+      project: args.project || "mission-control", // Default project
       createdAt: Date.now(),
       updatedAt: Date.now(),
     });
@@ -43,6 +57,7 @@ export const update = mutation({
     status: v.optional(v.string()),
     priority: v.optional(v.string()),
     tags: v.optional(v.array(v.string())),
+    project: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
@@ -60,8 +75,6 @@ export const delete_ = mutation({
   },
 });
 
-// Deprecated: Keeping for backward compatibility temporarily if needed, 
-// but UI should move to `update`.
 export const updateStatus = mutation({
   args: { id: v.id("kanbanTasks"), status: v.string() },
   handler: async (ctx, args) => {

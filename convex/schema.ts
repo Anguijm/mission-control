@@ -53,10 +53,23 @@ export default defineSchema({
     createdAt: v.number(),
     updatedAt: v.number(),
     notionId: v.optional(v.string()),
+    project: v.optional(v.string()),
   })
     .index("by_status", ["status"])
     .index("by_priority", ["priority"])
+    .index("by_project", ["project"])
     .index("by_notionId", ["notionId"]),
+
+  agents: defineTable({
+    name: v.string(),
+    role: v.string(),
+    emoji: v.string(),
+    status: v.string(), // online, offline, working
+    task: v.optional(v.string()),
+    cpu: v.optional(v.number()),
+    ram: v.optional(v.number()),
+    lastSeen: v.number(),
+  }).index("by_lastSeen", ["lastSeen"]),
 
   documents: defineTable({
     source: v.string(),

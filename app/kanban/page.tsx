@@ -20,17 +20,18 @@ const PRIORITY_COLORS: Record<string, string> = {
 };
 
 export default function KanbanPage() {
-  const tasks = useQuery(api.kanban.list, {});
+  const [projectFilter, setProjectFilter] = useState("all");
+  
+  const tasks = useQuery(api.kanban.list, {
+    project: projectFilter === "all" ? undefined : projectFilter
+  });
+  
   const createTask = useMutation(api.kanban.create);
   const updateTask = useMutation(api.kanban.update);
   const deleteTask = useMutation(api.kanban.delete_);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTask, setEditingTask] = useState<TaskData | null>(null);
-
-  if (tasks === undefined) {
-    return <div className="p-8 text-zinc-500">Loading board...</div>;
-  }
 
   const handleCreate = async (data: TaskData) => {
     await createTask({
@@ -39,6 +40,7 @@ export default function KanbanPage() {
       status: data.status,
       priority: data.priority,
       tags: data.tags,
+      project: data.project,
     });
   };
 
@@ -51,6 +53,7 @@ export default function KanbanPage() {
       status: data.status,
       priority: data.priority,
       tags: data.tags,
+      project: data.project,
     });
   };
 
@@ -73,11 +76,24 @@ export default function KanbanPage() {
       <div className="mb-6 flex justify-between items-center">
         <div>
           <h1 className="text-3xl font-bold text-zinc-100">Mission Board</h1>
-          <p className="text-zinc-500 mt-1">Autonomous Task Tracking</p>
+          <div className="flex items-center gap-2 mt-1">
+            <p className="text-zinc-500">Autonomous Task Tracking</p>
+            <span className="text-zinc-700">•</span>
+            {/* Project Filter */}
+            <select
+              value={projectFilter}
+              onChange={(e) => setProjectFilter(e.target.value)}
+              className="bg-zinc-900 border border-zinc-800 text-xs text-zinc-300 rounded px-2 py-1 focus:outline-none focus:border-zinc-700"
+            >
+              <option value="all">All Projects</option>
+              <option value="mission-control">Mission Control</option>
+              <option value="urban-explorer">Urban Explorer</option>
+            </select>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-sm text-zinc-600">
-            {tasks.length} tasks
+            {tasks ? `${tasks.length} tasks` : 'Loading...'}
           </div>
           <button
             onClick={openNewTask}
@@ -90,7 +106,7 @@ export default function KanbanPage() {
 
       <div className="flex-1 grid grid-cols-4 gap-4 min-h-0 overflow-x-auto">
         {COLUMNS.map((col) => {
-          const colTasks = tasks.filter((t) => t.status === col.id);
+          const colTasks = tasks?.filter((t) => t.status === col.id) || [];
           
           return (
             <div key={col.id} className={`flex flex-col h-full rounded-xl border ${col.color}`}>
@@ -115,11 +131,18 @@ export default function KanbanPage() {
                     </div>
                     
                     <div className="flex items-center justify-between mt-3">
-                      <span className={`text-[10px] px-1.5 py-0.5 rounded border uppercase tracking-wider font-medium ${PRIORITY_COLORS[task.priority] || PRIORITY_COLORS.medium}`}>
-                        {task.priority}
-                      </span>
+                      <div className="flex gap-1.5 items-center">
+                        <span className={`text-[10px] px-1.5 py-0.5 rounded border uppercase tracking-wider font-medium ${PRIORITY_COLORS[task.priority] || PRIORITY_COLORS.medium}`}>
+                          {task.priority}
+                        </span>
+                        {/* Project Badge */}
+                        <span className="text-[10px] text-zinc-500 bg-zinc-800/50 px-1.5 py-0.5 rounded border border-zinc-800">
+                          {task.project === 'mission-control' ? 'MC' : 
+                           task.project === 'urban-explorer' ? 'UE' : '??'}
+                        </span>
+                      </div>
                       
-                      {/* Quick Status Move (Stop propagation to avoid opening modal) */}
+                      {/* Quick Status Move */}
                       <select
                         value={task.status}
                         onClick={(e) => e.stopPropagation()}
@@ -131,16 +154,6 @@ export default function KanbanPage() {
                         ))}
                       </select>
                     </div>
-                    
-                    {task.tags && task.tags.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {task.tags.slice(0, 3).map(tag => (
-                          <span key={tag} className="text-[10px] text-zinc-500 bg-zinc-800/50 px-1 rounded">
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    )}
                   </div>
                 ))}
               </div>
@@ -155,6 +168,7 @@ export default function KanbanPage() {
         onSave={editingTask ? handleUpdate : handleCreate}
         onDelete={editingTask ? handleDelete : undefined}
         initialData={editingTask}
+        defaultProject={projectFilter !== "all" ? projectFilter : "mission-control"}
       />
     </div>
   );

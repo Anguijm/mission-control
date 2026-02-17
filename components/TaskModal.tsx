@@ -10,6 +10,7 @@ export type TaskData = {
   status: string;
   priority: string;
   tags: string[];
+  project: string;
 };
 
 interface TaskModalProps {
@@ -18,20 +19,25 @@ interface TaskModalProps {
   onSave: (task: TaskData) => void;
   onDelete?: (id: Id<"kanbanTasks">) => void;
   initialData?: TaskData | null;
+  defaultProject?: string;
 }
 
-export function TaskModal({ isOpen, onClose, onSave, onDelete, initialData }: TaskModalProps) {
+export function TaskModal({ isOpen, onClose, onSave, onDelete, initialData, defaultProject }: TaskModalProps) {
   const [formData, setFormData] = useState<TaskData>({
     title: "",
     description: "",
     status: "todo",
     priority: "medium",
     tags: [],
+    project: defaultProject || "mission-control",
   });
 
   useEffect(() => {
     if (initialData) {
-      setFormData(initialData);
+      setFormData({
+        ...initialData,
+        project: initialData.project || defaultProject || "mission-control",
+      });
     } else {
       setFormData({
         title: "",
@@ -39,9 +45,10 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, initialData }: Ta
         status: "todo",
         priority: "medium",
         tags: [],
+        project: defaultProject || "mission-control",
       });
     }
-  }, [initialData, isOpen]);
+  }, [initialData, isOpen, defaultProject]);
 
   if (!isOpen) return null;
 
@@ -72,16 +79,14 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, initialData }: Ta
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-zinc-500 mb-1">Status</label>
+              <label className="block text-xs font-medium text-zinc-500 mb-1">Project</label>
               <select
-                value={formData.status}
-                onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                value={formData.project}
+                onChange={(e) => setFormData({ ...formData, project: e.target.value })}
                 className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none focus:border-blue-500/50"
               >
-                <option value="todo">To Do</option>
-                <option value="in-progress">In Progress</option>
-                <option value="blocked">Blocked</option>
-                <option value="done">Done</option>
+                <option value="mission-control">Mission Control</option>
+                <option value="urban-explorer">Urban Explorer</option>
               </select>
             </div>
             <div>
@@ -96,6 +101,20 @@ export function TaskModal({ isOpen, onClose, onSave, onDelete, initialData }: Ta
                 <option value="high">High</option>
               </select>
             </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-medium text-zinc-500 mb-1">Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full bg-zinc-950 border border-zinc-800 rounded-lg px-3 py-2 text-zinc-200 focus:outline-none focus:border-blue-500/50"
+            >
+              <option value="todo">To Do</option>
+              <option value="in-progress">In Progress</option>
+              <option value="blocked">Blocked</option>
+              <option value="done">Done</option>
+            </select>
           </div>
 
           <div>

@@ -9,6 +9,7 @@
  */
 
 import type * as activities from "../activities.js";
+import type * as agents from "../agents.js";
 import type * as kanban from "../kanban.js";
 import type * as search from "../search.js";
 import type * as seed from "../seed.js";
@@ -22,6 +23,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   activities: typeof activities;
+  agents: typeof agents;
   kanban: typeof kanban;
   search: typeof search;
   seed: typeof seed;
