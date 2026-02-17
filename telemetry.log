@@ -1,3 +1,203 @@
 [dotenv@17.3.1] injecting env (4) from .env.local -- tip: ⚙️  suppress all logs with { quiet: true }
 Starting Telemetry Daemon...
 Press Ctrl+C to stop.
+Failed to report for Tempo: Error: [Request ID: eb27fa3c5303fd39] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Beau: Error: [Request ID: db52e2eada69b4af] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Tempo: Error: [Request ID: 4e9034ca7778fbb7] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Bolt: Error: [Request ID: 1fabc205864ba626] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Tempo: Error: [Request ID: 188087ab6bde57fb] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Bolt: Error: [Request ID: 6497a7330fa21d03] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Circus: Error: [Request ID: a5173bf98fe4ab4b] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Beau: Error: [Request ID: 453d285f28fa8e9d] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Circus: Error: [Request ID: cc7b45b4a987d299] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Scout: Error: [Request ID: 61a6203f2292c118] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Tempo: Error: [Request ID: 000f960cbcf53bc8] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+[CONVEX M(agents:reportHeartbeat)] [WARN] Function execution took a long time. (maximum duration: 1s, actual duration: 821.639429ms).
+Failed to report for Tempo: Error: [Request ID: 3b718f9690a88b0d] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Archive: Error: [Request ID: f20516f0aeee8dfd] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Bolt: Error: [Request ID: 1292848c627ac9b1] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Circus: Error: [Request ID: 48a40a1a3ec75c5e] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Scope: Error: [Request ID: 5abfc5dfea45af95] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Bolt: Error: [Request ID: 8e533394ce2417c3] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Radar: Error: [Request ID: 57210c5981bb97d3] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Beau: Error: [Request ID: b3da521750b082c6] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Radar: Error: [Request ID: 27629e8567ef5db0] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Scout: Error: [Request ID: 4397b9ff2a93fb1c] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Circus: Error: [Request ID: 2446d3824df07e32] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Scout: Error: [Request ID: 7664fa68ced47092] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Bolt: Error: [Request ID: ea2c85b36fd5c996] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Radar: Error: [Request ID: 66d763c2c5837e46] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Beau: Error: [Request ID: 419caea7ab81423d] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+[CONVEX M(agents:reportHeartbeat)] [WARN] Function execution took a long time. (maximum duration: 1s, actual duration: 832.247569ms).
+Failed to report for Scout: Error: [Request ID: 620c515204fe4f85] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Radar: Error: [Request ID: 871694e890fc55e6] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Bolt: Error: [Request ID: 038a5ead9d77d596] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Beau: Error: [Request ID: 3b2cbacb4d77c5ea] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Bolt: Error: [Request ID: ad5a466a84154541] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Archive: Error: [Request ID: e5391403d88da060] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
+Failed to report for Bolt: Error: [Request ID: 4237b0fcfde59116] Server Error
+Function execution timed out (maximum duration: 1s)
+
+    at ConvexHttpClient.mutationInner (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:387:15)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async ConvexHttpClient.processMutationQueue (/home/johnanguiano/.openclaw/workspace/projects/mission-control/node_modules/convex/src/browser/http_client.ts:402:24)
