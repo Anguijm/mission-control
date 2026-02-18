@@ -16,7 +16,7 @@ function alert(message: string) {
   console.log('🚨 ALERT:', message);
   const { exec } = require('child_process');
   // Try using openclaw CLI to send message
-  exec(`openclaw message send --channel signal --target "${ME}" --message "👻 Poltergeist Alert:\n${message}"`, (error, stdout, stderr) => {
+  exec(`openclaw message send --channel signal --target "${ME}" --message "👻 Poltergeist Alert:\n${message}"`, (error: any, stdout: any, stderr: any) => {
     if (error) {
       console.error('Failed to send via openclaw:', error);
       // Fallback: log to file (already done via console.log)

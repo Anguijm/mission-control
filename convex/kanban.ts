@@ -61,7 +61,7 @@ export const update = mutation({
   handler: async (ctx, args) => {
     const { id, ...updates } = args;
     await ctx.db.patch(id, {
-      ...updates,
+      ...(updates as any),
       updatedAt: Date.now(),
     });
   },
