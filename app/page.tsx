@@ -17,27 +17,27 @@ import {
 
 const typeTokens: Record<string, { color: string; label: string; icon: string }> = {
   message: {
-    color: "bg-[rgba(90,156,245,0.15)] text-[var(--color-brand-blue)]",
+    color: "bg-brand-blue/15 text-brand-blue",
     label: "message",
     icon: "💬",
   },
   tool: {
-    color: "bg-[rgba(229,133,15,0.15)] text-[var(--color-brand-orange)]",
+    color: "bg-brand-orange/15 text-brand-orange",
     label: "tool",
     icon: "🛠️",
   },
   file: {
-    color: "bg-[rgba(46,204,143,0.15)] text-[var(--color-brand-green)]",
+    color: "bg-brand-green/15 text-brand-green",
     label: "content",
     icon: "📁",
   },
   cron: {
-    color: "bg-[rgba(90,156,245,0.15)] text-[var(--color-brand-blue)]",
+    color: "bg-brand-blue/15 text-brand-blue",
     label: "cron",
     icon: "⏰",
   },
   system: {
-    color: "bg-[rgba(255,255,255,0.08)] text-[var(--text-secondary)]",
+    color: "bg-white/8 text-secondary",
     label: "system",
     icon: "🖥️",
   },
@@ -177,7 +177,7 @@ export default function CommandCenterPage() {
               })}
             </p>
           </div>
-          <button className="rounded-xl border border-white/10 bg-[var(--bg-hover)] px-4 py-2 text-sm text-secondary transition hover:border-white/25">
+          <button className="rounded-xl border border-white/10 bg-hover px-4 py-2 text-sm text-secondary transition hover:border-white/25">
             Export Report
           </button>
         </div>
@@ -185,15 +185,15 @@ export default function CommandCenterPage() {
 
       <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         {statCards.map((stat) => (
-          <div key={stat.label} className="relative overflow-hidden rounded-2xl border border-white/5 bg-[var(--bg-card)] p-5">
-            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[var(--color-brand-blue)] via-[var(--color-brand-green)] to-[var(--color-brand-orange)]" />
+          <div key={stat.label} className="relative overflow-hidden rounded-2xl border border-white/5 bg-card p-5">
+            <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-brand-blue via-brand-green to-brand-orange" />
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-muted">{stat.label}</p>
                 <p className="mt-3 text-3xl font-semibold">{stat.value ?? "—"}</p>
-                <p className="mt-1 text-xs text-[var(--color-brand-green)]">{stat.delta}</p>
+                <p className="mt-1 text-xs text-brand-green">{stat.delta}</p>
               </div>
-              <div className="rounded-xl bg-[var(--bg-hover)] p-3 text-secondary">
+              <div className="rounded-xl bg-hover p-3 text-secondary">
                 <stat.icon size={20} />
               </div>
             </div>
@@ -202,13 +202,13 @@ export default function CommandCenterPage() {
       </section>
 
       <section className="grid grid-cols-1 gap-6 lg:grid-cols-[2fr_1fr]">
-        <div className="rounded-2xl border border-white/5 bg-[var(--bg-card)]">
+        <div className="rounded-2xl border border-white/5 bg-card">
           <div className="flex items-center justify-between border-b border-white/5 px-5 py-4">
             <div>
               <h2 className="text-lg font-semibold">Live Activity</h2>
               <p className="text-sm text-secondary">Real-time feed of heartbeats, messages, and tool calls</p>
             </div>
-            <Link href="/activity" className="text-sm text-secondary hover:text-[var(--text-primary)]">
+            <Link href="/activity" className="text-sm text-secondary hover:text-primary">
               View all →
             </Link>
           </div>
@@ -245,9 +245,9 @@ export default function CommandCenterPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="rounded-2xl border border-white/5 bg-[var(--bg-card)] p-5">
+          <div className="rounded-2xl border border-white/5 bg-card p-5">
             <div className="mb-4 flex items-center gap-3">
-              <Bot size={18} className="text-[var(--color-brand-blue)]" />
+              <Bot size={18} className="text-brand-blue" />
               <div>
                 <p className="text-sm text-muted">Agent Configuration</p>
                 <h3 className="text-lg font-semibold">{primaryAgent?.name ?? "Circus Cruz"}</h3>
@@ -281,9 +281,9 @@ export default function CommandCenterPage() {
             </dl>
           </div>
 
-          <div className="rounded-2xl border border-white/5 bg-[var(--bg-card)] p-5">
+          <div className="rounded-2xl border border-white/5 bg-card p-5">
             <div className="mb-4 flex items-center gap-3">
-              <HardDriveDownload size={18} className="text-[var(--color-brand-orange)]" />
+              <HardDriveDownload size={18} className="text-brand-orange" />
               <div>
                 <p className="text-sm text-muted">Quick Actions</p>
                 <h3 className="text-lg font-semibold">Control Panel</h3>
@@ -291,48 +291,48 @@ export default function CommandCenterPage() {
             </div>
             <div className="space-y-3">
               <button
-                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)] disabled:opacity-50"
+                className="w-full rounded-xl border border-white/10 bg-hover/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-primary disabled:opacity-50"
                 disabled={actionLoading !== null}
                 onClick={() => handleQuickAction("heartbeat")}
               >
                 {actionLoading === "heartbeat" ? "Sending heartbeat…" : "Send Heartbeat"}
               </button>
               <button
-                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)] disabled:opacity-50"
+                className="w-full rounded-xl border border-white/10 bg-hover/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-primary disabled:opacity-50"
                 disabled={actionLoading !== null}
                 onClick={() => handleQuickAction("content")}
               >
                 {actionLoading === "content" ? "Syncing content…" : "Sync Content"}
               </button>
               <button
-                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)] disabled:opacity-50"
+                className="w-full rounded-xl border border-white/10 bg-hover/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-primary disabled:opacity-50"
                 disabled={actionLoading !== null}
                 onClick={() => handleQuickAction("brief")}
               >
                 {actionLoading === "brief" ? "Running brief…" : "Run Daily Brief"}
               </button>
               {actionSuccess && (
-                <p className="rounded-lg bg-[rgba(46,204,143,0.1)] px-3 py-2 text-xs text-[var(--color-brand-green)]">
+                <p className="rounded-lg bg-brand-green/10 px-3 py-2 text-xs text-brand-green">
                   ✓ {actionSuccess}
                 </p>
               )}
               {actionError && (
-                <p className="rounded-lg bg-[rgba(217,85,85,0.1)] px-3 py-2 text-xs text-[var(--color-brand-red)]">
+                <p className="rounded-lg bg-brand-red/10 px-3 py-2 text-xs text-brand-red">
                   ✗ {actionError}
                 </p>
               )}
               {healthReport && (
-                <div className="mt-1 rounded-xl border border-white/5 bg-[var(--bg-hover)]/40 p-3 space-y-2">
+                <div className="mt-1 rounded-xl border border-white/5 bg-hover/40 p-3 space-y-2">
                   <div className="flex items-center justify-between text-xs text-muted mb-1">
                     <span className="font-semibold uppercase tracking-wider">Health Report</span>
                     <span className="flex gap-3">
-                      <span>CPU <span className="text-[var(--text-primary)]">{healthReport.cpu}%</span></span>
-                      <span>RAM <span className="text-[var(--text-primary)]">{healthReport.ram}%</span></span>
+                      <span>CPU <span className="text-primary">{healthReport.cpu}%</span></span>
+                      <span>RAM <span className="text-primary">{healthReport.ram}%</span></span>
                     </span>
                   </div>
                   {Object.values(healthReport.checks).map((c) => (
                     <div key={c.label} className="flex items-start gap-2 text-xs">
-                      <span className={c.ok ? "text-[var(--color-brand-green)]" : "text-[var(--color-brand-red)]"}>
+                      <span className={c.ok ? "text-brand-green" : "text-brand-red"}>
                         {c.ok ? "●" : "●"}
                       </span>
                       <span className="text-secondary w-28 shrink-0">{c.label}</span>
@@ -344,19 +344,19 @@ export default function CommandCenterPage() {
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/5 bg-[var(--bg-card)] p-4 text-xs text-muted">
-            Need more power? <Link className="text-[var(--color-brand-blue)]" href="/settings">Tune persona & config →</Link>
+          <div className="rounded-2xl border border-white/5 bg-card p-4 text-xs text-muted">
+            Need more power? <Link className="text-brand-blue" href="/settings">Tune persona & config →</Link>
           </div>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-white/5 bg-[var(--bg-card)] p-5">
+      <section className="rounded-2xl border border-white/5 bg-card p-5">
         <div className="mb-4 flex items-center justify-between">
           <div>
             <h2 className="text-lg font-semibold">Scheduled Tasks</h2>
             <p className="text-sm text-secondary">Heartbeat, cron jobs, and automations running in Convex</p>
           </div>
-          <Link href="/calendar" className="text-sm text-secondary hover:text-[var(--text-primary)]">
+          <Link href="/calendar" className="text-sm text-secondary hover:text-primary">
             Calendar →
           </Link>
         </div>
@@ -372,7 +372,7 @@ export default function CommandCenterPage() {
               <div key={task._id} className="flex items-center gap-4 px-4 py-4">
                 <div
                   className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: task.color ?? "var(--color-brand-blue)" }}
+                  style={{ backgroundColor: task.color ?? "var(--brand-blue)" }}
                 />
                 <div className="flex-1">
                   <p className="text-sm font-medium">{task.name}</p>
@@ -380,7 +380,7 @@ export default function CommandCenterPage() {
                 </div>
                 <span
                   className={`text-xs uppercase tracking-wide ${
-                    task.enabled ? "text-[var(--color-brand-green)]" : "text-muted"
+                    task.enabled ? "text-brand-green" : "text-muted"
                   }`}
                 >
                   {task.enabled ? "active" : "paused"}

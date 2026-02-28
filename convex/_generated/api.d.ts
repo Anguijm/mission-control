@@ -17,6 +17,7 @@ import type * as content from "../content.js";
 import type * as kanban from "../kanban.js";
 import type * as search from "../search.js";
 import type * as seed from "../seed.js";
+import type * as seed_polish from "../seed_polish.js";
 import type * as tasks from "../tasks.js";
 import type * as users from "../users.js";
 
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   kanban: typeof kanban;
   search: typeof search;
   seed: typeof seed;
+  seed_polish: typeof seed_polish;
   tasks: typeof tasks;
   users: typeof users;
 }>;
