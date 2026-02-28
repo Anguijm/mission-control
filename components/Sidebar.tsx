@@ -9,10 +9,12 @@ import {
   Clapperboard,
   Brain,
   Share2,
-  Settings,
+  Settings as SettingsIcon,
+  Activity,
 } from "lucide-react";
-import Image from "next/image";
-import { useMemo } from "react";
+import { useMutation, useQuery } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useState } from "react";
 
 const navItems = [
   { href: "/", label: "Command Center", icon: Gauge },
@@ -21,56 +23,67 @@ const navItems = [
   { href: "/content", label: "Content Intel", icon: Clapperboard },
   { href: "/brain", label: "Second Brain", icon: Brain },
   { href: "/connections", label: "Connections", icon: Share2 },
-  { href: "/settings", label: "Settings", icon: Settings },
+  { href: "/settings", label: "Settings", icon: SettingsIcon },
 ];
 
 function AgentStatus() {
+  const agent = useQuery(api.agents.list)?.['0'];
+  const isOnline = agent?.status === "online";
+  
   return (
     <div className="mt-6 rounded-xl border border-white/10 bg-[var(--bg-card)]/60 p-4">
       <div className="flex items-center gap-3">
         <span className="relative inline-flex h-3 w-3">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-brand-green)] opacity-75" />
-          <span className="relative inline-flex h-3 w-3 rounded-full bg-[var(--color-brand-green)]" />
+          {isOnline && (
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--color-brand-green)] opacity-75" />
+          )}
+          <span 
+            className={`relative inline-flex h-3 w-3 rounded-full ${isOnline ? "bg-[var(--color-brand-green)]" : "bg-red-500"}`}
+          />
         </span>
         <div className="text-xs uppercase tracking-[0.2em] text-muted">
-          Agent Online · Convex · Gemini
+          {agent?.name ?? "Agent Offline"}
         </div>
       </div>
       <div className="mt-3 text-sm text-secondary">
-        Last sync 2m ago · Heartbeat in 28m
+        {agent ? `Last ping ${Math.floor((Date.now() - agent.lastSeen) / 1000 / 60)}m ago` : "No signal"}
       </div>
     </div>
   );
 }
 
-function XPBar() {
-  const progress = 0.64; // placeholder, to be wired later
-  return (
-    <div className="rounded-xl border border-white/10 bg-[var(--bg-card)]/70 p-4">
-      <div className="flex items-center justify-between text-xs text-secondary">
-        <span>Level 7 — Field Agent</span>
-        <span>{Math.round(progress * 100)}%</span>
-      </div>
-      <div className="mt-2 h-2 rounded-full bg-zinc-900">
-        <div
-          className="h-full rounded-full bg-gradient-to-r from-[var(--color-brand-blue)] via-[var(--color-brand-green)] to-[var(--color-brand-orange)]"
-          style={{ width: `${progress * 100}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-export function Sidebar() {
+export default function Sidebar() {
   const pathname = usePathname();
-  const nav = useMemo(() => navItems, []);
+  const runHealthCheck = useMutation(api.agents.healthCheck);
+  const runBrief = useMutation(api.actions.runBrief);
+  
+  const [loading, setLoading] = useState<string | null>(null);
+
+  const handleAction = async (action: "heartbeat" | "brief") => {
+    try {
+      setLoading(action);
+      if (action === "heartbeat") {
+        await runHealthCheck({
+          name: "Circus Cruz",
+          role: "Walrus of Whimsy",
+          emoji: "🦭",
+        });
+      } else {
+        await runBrief({});
+      }
+    } catch (err) {
+      console.error("Action failed:", err);
+    } finally {
+      setLoading(null);
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 flex h-screen w-64 flex-col border-r border-white/5 bg-[var(--bg-sidebar)]/95 px-5 py-6">
-      <div>
+      <div className="mb-6">
         <div className="flex items-center gap-3">
-          <div className="relative h-10 w-10">
-            <Image src="/logo.svg" alt="Mission Control" fill sizes="40px" className="object-contain" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--color-brand-blue)]/20 to-[var(--color-brand-green)]/20 text-2xl">
+            🦭
           </div>
           <div>
             <p className="text-sm font-semibold tracking-wide text-secondary">Mission Control</p>
@@ -80,8 +93,8 @@ export function Sidebar() {
         <AgentStatus />
       </div>
 
-      <nav className="mt-8 flex-1 space-y-1">
-        {nav.map(({ href, label, icon: Icon }) => {
+      <nav className="flex-1 space-y-1">
+        {navItems.map(({ href, label, icon: Icon }) => {
           const isActive = pathname === href;
           return (
             <Link
@@ -109,15 +122,22 @@ export function Sidebar() {
         <div className="rounded-xl border border-white/10 bg-[var(--bg-card)]/70 p-4">
           <p className="text-xs uppercase tracking-[0.2em] text-muted">Quick Actions</p>
           <div className="mt-3 space-y-2">
-            <button className="w-full rounded-lg border border-white/10 bg-[var(--bg-hover)]/70 px-3 py-2 text-left text-sm text-secondary transition hover:border-white/20 hover:text-[var(--text-primary)]">
-              Send Heartbeat
+            <button 
+              disabled={!!loading}
+              onClick={() => handleAction("heartbeat")}
+              className="w-full rounded-lg border border-white/10 bg-[var(--bg-hover)]/70 px-3 py-2 text-left text-sm text-secondary transition hover:border-white/20 hover:text-[var(--text-primary)] disabled:opacity-50"
+            >
+              {loading === "heartbeat" ? "Sending..." : "Send Heartbeat"}
             </button>
-            <button className="w-full rounded-lg border border-white/10 bg-[var(--bg-hover)]/70 px-3 py-2 text-left text-sm text-secondary transition hover:border-white/20 hover:text-[var(--text-primary)]">
-              Run Daily Brief
+            <button 
+              disabled={!!loading}
+              onClick={() => handleAction("brief")}
+              className="w-full rounded-lg border border-white/10 bg-[var(--bg-hover)]/70 px-3 py-2 text-left text-sm text-secondary transition hover:border-white/20 hover:text-[var(--text-primary)] disabled:opacity-50"
+            >
+              {loading === "brief" ? "Running..." : "Run Daily Brief"}
             </button>
           </div>
         </div>
-        <XPBar />
       </div>
     </aside>
   );
