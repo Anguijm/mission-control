@@ -66,11 +66,18 @@ export default function CommandCenterPage() {
   const tasks = useQuery(api.tasks.list, {});
   const agents = useQuery(api.agents.list, {});
   const sendHeartbeat = useMutation(api.agents.reportHeartbeat);
+  const runHealthCheck = useMutation(api.agents.healthCheck);
   const syncContent = useMutation(api.content.sync);
   const runBrief = useMutation(api.actions.runBrief);
   const [actionLoading, setActionLoading] = useState<"heartbeat" | "content" | "brief" | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [actionSuccess, setActionSuccess] = useState<string | null>(null);
+  const [healthReport, setHealthReport] = useState<null | {
+    ok: boolean;
+    cpu: number;
+    ram: number;
+    checks: Record<string, { ok: boolean; label: string; detail: string }>;
+  }>(null);
 
   const handleQuickAction = async (type: "heartbeat" | "content" | "brief") => {
     setActionError(null);
@@ -78,16 +85,13 @@ export default function CommandCenterPage() {
     try {
       setActionLoading(type);
       if (type === "heartbeat") {
-        await sendHeartbeat({
+        const result = await runHealthCheck({
           name: "Circus Cruz",
           role: "Walrus of Whimsy",
           emoji: "🦭",
-          status: "online",
-          task: "Thinking...",
-          cpu: Math.round(10 + Math.random() * 20),
-          ram: Math.round(30 + Math.random() * 40),
         });
-        setActionSuccess("Heartbeat sent — check the activity feed.");
+        setHealthReport(result);
+        setActionSuccess(result.ok ? "All systems nominal." : "Health check complete — some issues found.");
       } else if (type === "content") {
         await syncContent({ source: "all" });
         setActionSuccess("Content sync queued.");
@@ -316,6 +320,26 @@ export default function CommandCenterPage() {
                 <p className="rounded-lg bg-[rgba(217,85,85,0.1)] px-3 py-2 text-xs text-[var(--color-brand-red)]">
                   ✗ {actionError}
                 </p>
+              )}
+              {healthReport && (
+                <div className="mt-1 rounded-xl border border-white/5 bg-[var(--bg-hover)]/40 p-3 space-y-2">
+                  <div className="flex items-center justify-between text-xs text-muted mb-1">
+                    <span className="font-semibold uppercase tracking-wider">Health Report</span>
+                    <span className="flex gap-3">
+                      <span>CPU <span className="text-[var(--text-primary)]">{healthReport.cpu}%</span></span>
+                      <span>RAM <span className="text-[var(--text-primary)]">{healthReport.ram}%</span></span>
+                    </span>
+                  </div>
+                  {Object.values(healthReport.checks).map((c) => (
+                    <div key={c.label} className="flex items-start gap-2 text-xs">
+                      <span className={c.ok ? "text-[var(--color-brand-green)]" : "text-[var(--color-brand-red)]"}>
+                        {c.ok ? "●" : "●"}
+                      </span>
+                      <span className="text-secondary w-28 shrink-0">{c.label}</span>
+                      <span className="text-muted">{c.detail}</span>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
           </div>
