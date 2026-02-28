@@ -1,60 +1,121 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import {
+  LayoutDashboard,
+  Target,
+  KanbanSquare,
+  Clapperboard,
+  Brain,
+  Share2,
+  Settings2,
+} from "lucide-react";
+import packageJson from "@/package.json";
+import type { LucideIcon } from "lucide-react";
 
-const navItems = [
-  { href: "/", label: "Dashboard", icon: "📊" },
-  { href: "/activity", label: "Activity", icon: "⚡" },
-  { href: "/calendar", label: "Calendar", icon: "📅" },
-  { href: "/kanban", label: "Board", icon: "📋" },
-  { href: "/agents", label: "Agents", icon: "🤖" },
-  { href: "/org", label: "Organization", icon: "🏢" },
-  { href: "/search", label: "Search", icon: "🔍" },
+const navItems: { href: string; label: string; icon: LucideIcon }[] = [
+  { href: "/", label: "Command Center", icon: LayoutDashboard },
+  { href: "/productivity", label: "Productivity", icon: Target },
+  { href: "/tasks", label: "Tasks", icon: KanbanSquare },
+  { href: "/content", label: "Content Intel", icon: Clapperboard },
+  { href: "/brain", label: "Second Brain", icon: Brain },
+  { href: "/connections", label: "Connections", icon: Share2 },
+  { href: "/settings", label: "Settings", icon: Settings2 },
 ];
+
+const agentMeta = {
+  status: "Agent Online",
+  environment: "Railway",
+  model: "Claude Sonnet 4",
+  uptime: "128h uptime",
+};
+
+const levelMeta = {
+  label: "Level 7 — Field Agent",
+  current: 4580,
+  nextLabel: "Strategist",
+  progress: 0.68,
+};
 
 export function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 border-r border-zinc-800 h-screen bg-zinc-950 flex flex-col fixed left-0 top-0">
-      <div className="p-6 border-b border-zinc-800">
-        <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
-          Mission Control
-        </h1>
+    <aside
+      className="fixed inset-y-0 left-0 z-30 flex w-[260px] flex-col border-r border-white/5"
+      style={{ backgroundColor: "var(--bg-sidebar)" }}
+    >
+      <div className="border-b border-white/5 px-6 py-5">
+        <div className="flex items-center gap-3">
+          <div className="rounded-2xl bg-white/5 p-2">
+            <Image src="/logo.svg" alt="Mission Control logo" width={36} height={36} priority />
+          </div>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+              Mission Control
+            </p>
+            <p className="text-[11px] text-white/40">v{packageJson.version}</p>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-2xl border border-white/5 bg-[var(--bg-card)] p-4">
+          <div className="flex items-center gap-2 text-sm font-medium text-white">
+            <span className="status-dot h-2.5 w-2.5 rounded-full bg-[var(--brand-green)]"></span>
+            {agentMeta.status}
+          </div>
+          <p className="mt-2 text-xs text-white/60">
+            {agentMeta.environment} • {agentMeta.model}
+          </p>
+          <p className="text-[11px] text-white/40">{agentMeta.uptime}</p>
+        </div>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1">
-        {navItems.map((item) => {
-          const isActive = pathname === item.href;
+      <nav className="flex-1 space-y-1 px-3 py-4">
+        {navItems.map(({ href, label, icon: Icon }) => {
+          const isActive =
+            pathname === href || (href !== "/" && pathname?.startsWith(href));
+
           return (
             <Link
-              key={item.href}
-              href={item.href}
-              className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+              key={href}
+              href={href}
+              className={`group flex items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition-colors ${
                 isActive
-                  ? "bg-zinc-800 text-zinc-100"
-                  : "text-zinc-500 hover:text-zinc-300 hover:bg-zinc-900"
+                  ? "bg-[var(--bg-elevated)] text-white"
+                  : "text-white/60 hover:bg-white/5"
               }`}
             >
-              <span>{item.icon}</span>
-              {item.label}
+              <Icon
+                size={18}
+                className={
+                  isActive
+                    ? "text-[var(--brand-orange)]"
+                    : "text-white/50 group-hover:text-white/80"
+                }
+              />
+              <span>{label}</span>
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-4 border-t border-zinc-800">
-        <div className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-zinc-900 transition-colors cursor-pointer">
-          <div className="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs">
-            OA
-          </div>
-          <div>
-            <p className="text-sm font-medium text-zinc-200">OpenClaw Agent</p>
-            <p className="text-xs text-zinc-500">Online</p>
-          </div>
+      <div className="border-t border-white/5 px-6 py-5">
+        <div className="flex items-center justify-between text-[11px] text-white/50">
+          <span>{levelMeta.label}</span>
+          <span>{levelMeta.current.toLocaleString()} XP</span>
         </div>
+        <div className="mt-2 h-2 rounded-full bg-white/10">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-[var(--brand-orange)] via-[var(--brand-blue)] to-[var(--brand-green)]"
+            style={{ width: `${levelMeta.progress * 100}%` }}
+          />
+        </div>
+        <p className="mt-2 text-[11px] uppercase tracking-[0.2em] text-white/40">
+          Next: {levelMeta.nextLabel}
+        </p>
       </div>
-    </div>
+    </aside>
   );
 }

@@ -4,7 +4,7 @@ import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 
 export const metadata = {
   title: "Mission Control",
-  description: "Internal dashboard for OpenClaw agents",
+  description: "Premium command center for AI agents",
 };
 
 export default function RootLayout({
@@ -13,11 +13,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="dark">
-      <body className="bg-zinc-950 text-zinc-100 flex min-h-screen">
+    <html lang="en">
+      <body
+        className="antialiased flex min-h-screen"
+        style={{ backgroundColor: "var(--bg-page)", color: "var(--text-primary)" }}
+      >
         <ConvexClientProvider>
           <Sidebar />
-          <main className="flex-1 ml-64 p-8 overflow-y-auto">{children}</main>
+          <main className="ml-[260px] flex-1 overflow-y-auto px-10 pb-10 pt-8">
+            {children}
+          </main>
         </ConvexClientProvider>
       </body>
     </html>
