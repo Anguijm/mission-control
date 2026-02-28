@@ -69,8 +69,12 @@ export default function CommandCenterPage() {
   const syncContent = useMutation(api.content.sync);
   const runBrief = useMutation(api.actions.runBrief);
   const [actionLoading, setActionLoading] = useState<"heartbeat" | "content" | "brief" | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionSuccess, setActionSuccess] = useState<string | null>(null);
 
   const handleQuickAction = async (type: "heartbeat" | "content" | "brief") => {
+    setActionError(null);
+    setActionSuccess(null);
     try {
       setActionLoading(type);
       if (type === "heartbeat") {
@@ -83,11 +87,17 @@ export default function CommandCenterPage() {
           cpu: Math.round(10 + Math.random() * 20),
           ram: Math.round(30 + Math.random() * 40),
         });
+        setActionSuccess("Heartbeat sent — check the activity feed.");
       } else if (type === "content") {
         await syncContent({ source: "all" });
+        setActionSuccess("Content sync queued.");
       } else if (type === "brief") {
         await runBrief({});
+        setActionSuccess("Daily brief queued.");
       }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setActionError(`Failed: ${msg}`);
     } finally {
       setActionLoading(null);
     }
@@ -297,6 +307,16 @@ export default function CommandCenterPage() {
               >
                 {actionLoading === "brief" ? "Running brief…" : "Run Daily Brief"}
               </button>
+              {actionSuccess && (
+                <p className="rounded-lg bg-[rgba(46,204,143,0.1)] px-3 py-2 text-xs text-[var(--color-brand-green)]">
+                  ✓ {actionSuccess}
+                </p>
+              )}
+              {actionError && (
+                <p className="rounded-lg bg-[rgba(217,85,85,0.1)] px-3 py-2 text-xs text-[var(--color-brand-red)]">
+                  ✗ {actionError}
+                </p>
+              )}
             </div>
           </div>
 
