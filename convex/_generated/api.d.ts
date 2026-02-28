@@ -8,8 +8,12 @@
  * @module
  */
 
+import type * as actions from "../actions.js";
 import type * as activities from "../activities.js";
 import type * as agents from "../agents.js";
+import type * as brain from "../brain.js";
+import type * as config from "../config.js";
+import type * as content from "../content.js";
 import type * as kanban from "../kanban.js";
 import type * as search from "../search.js";
 import type * as seed from "../seed.js";
@@ -23,8 +27,12 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  actions: typeof actions;
   activities: typeof activities;
   agents: typeof agents;
+  brain: typeof brain;
+  config: typeof config;
+  content: typeof content;
   kanban: typeof kanban;
   search: typeof search;
   seed: typeof seed;

@@ -1,63 +1,40 @@
 "use client";
 
 import { useState } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Search, Brain, FileText, Link as LinkIcon, UploadCloud, Hash, Plus } from "lucide-react";
-
-interface Memory {
-  id: string;
-  type: "fact" | "url" | "document";
-  content: string;
-  tags: string[];
-  createdAt: string;
-}
-
-const MOCK_MEMORIES: Memory[] = [
-  {
-    id: "1",
-    type: "fact",
-    content: "User prefers 'Circus Cruz' persona with a mix of whimsy and competence.",
-    tags: ["preference", "persona"],
-    createdAt: "2024-02-28",
-  },
-  {
-    id: "2",
-    type: "url",
-    content: "https://docs.convex.dev/auth/clerk",
-    tags: ["resource", "dev"],
-    createdAt: "2024-02-27",
-  },
-  {
-    id: "3",
-    type: "fact",
-    content: "Project 'Mission Control' uses Next.js 15 and Convex.",
-    tags: ["project", "stack"],
-    createdAt: "2024-02-26",
-  },
-  {
-    id: "4",
-    type: "document",
-    content: "Q1_Strategy_Draft_v2.pdf",
-    tags: ["business", "archive"],
-    createdAt: "2024-02-20",
-  },
-  {
-    id: "5",
-    type: "fact",
-    content: "Avoid using 'Hello World' in examples; use 'Hello Mars' instead.",
-    tags: ["preference", "style"],
-    createdAt: "2024-02-15",
-  },
-];
 
 export default function SecondBrainPage() {
   const [activeTab, setActiveTab] = useState<"note" | "url" | "file">("note");
   const [search, setSearch] = useState("");
+  const [noteContent, setNoteContent] = useState("");
+  const [urlContent, setUrlContent] = useState("");
 
-  const filteredMemories = MOCK_MEMORIES.filter(
-    (m) =>
-      m.content.toLowerCase().includes(search.toLowerCase()) ||
-      m.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()))
-  );
+  const memories = useQuery(api.brain.search, { query: search });
+  const addMemory = useMutation(api.brain.add);
+
+  const handleAddNote = async () => {
+    if (!noteContent.trim()) return;
+    await addMemory({
+      title: "Quick Note",
+      content: noteContent,
+      type: "fact",
+      tags: ["note"],
+    });
+    setNoteContent("");
+  };
+
+  const handleAddUrl = async () => {
+    if (!urlContent.trim()) return;
+    await addMemory({
+      title: urlContent,
+      content: urlContent,
+      type: "url",
+      tags: ["resource"],
+    });
+    setUrlContent("");
+  };
 
   return (
     <div className="mx-auto flex max-w-6xl flex-col gap-8">
@@ -102,10 +79,15 @@ export default function SecondBrainPage() {
               {activeTab === "note" && (
                 <div className="flex flex-col gap-3">
                   <textarea
+                    value={noteContent}
+                    onChange={(e) => setNoteContent(e.target.value)}
                     placeholder="Teach the agent a new fact..."
                     className="h-32 w-full resize-none rounded-xl border border-white/10 bg-[var(--bg-hover)] p-3 text-sm text-[var(--text-primary)] outline-none placeholder:text-muted focus:border-white/20"
                   />
-                  <button className="rounded-xl bg-[var(--color-brand-blue)] py-2 text-sm font-semibold text-white transition hover:opacity-90">
+                  <button 
+                    onClick={handleAddNote}
+                    className="rounded-xl bg-[var(--color-brand-blue)] py-2 text-sm font-semibold text-white transition hover:opacity-90"
+                  >
                     Add Memory
                   </button>
                 </div>
@@ -116,11 +98,16 @@ export default function SecondBrainPage() {
                   <div className="relative">
                     <LinkIcon size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted" />
                     <input
+                      value={urlContent}
+                      onChange={(e) => setUrlContent(e.target.value)}
                       placeholder="https://..."
                       className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)] py-2 pl-9 pr-3 text-sm text-[var(--text-primary)] outline-none placeholder:text-muted focus:border-white/20"
                     />
                   </div>
-                  <button className="rounded-xl bg-[var(--color-brand-blue)] py-2 text-sm font-semibold text-white transition hover:opacity-90">
+                  <button 
+                    onClick={handleAddUrl}
+                    className="rounded-xl bg-[var(--color-brand-blue)] py-2 text-sm font-semibold text-white transition hover:opacity-90"
+                  >
                     Scrape & Store
                   </button>
                 </div>
@@ -141,11 +128,11 @@ export default function SecondBrainPage() {
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-2xl border border-white/5 bg-[var(--bg-card)] p-4">
               <p className="text-xs text-muted">Total Memories</p>
-              <p className="mt-1 text-2xl font-bold">{MOCK_MEMORIES.length}</p>
+              <p className="mt-1 text-2xl font-bold">{memories?.length ?? "-"}</p>
             </div>
             <div className="rounded-2xl border border-white/5 bg-[var(--bg-card)] p-4">
               <p className="text-xs text-muted">Last Sync</p>
-              <p className="mt-1 text-2xl font-bold">2m ago</p>
+              <p className="mt-1 text-2xl font-bold">Just now</p>
             </div>
           </div>
         </div>
@@ -163,43 +150,41 @@ export default function SecondBrainPage() {
           </div>
 
           <div className="grid grid-cols-1 gap-4">
-            {filteredMemories.map((memory) => (
-              <div
-                key={memory.id}
-                className="group flex flex-col gap-3 rounded-2xl border border-white/5 bg-[var(--bg-card)] p-5 transition hover:border-white/10"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--bg-hover)]">
-                      {memory.type === "fact" && <Brain size={14} className="text-[var(--color-brand-orange)]" />}
-                      {memory.type === "url" && <LinkIcon size={14} className="text-[var(--color-brand-blue)]" />}
-                      {memory.type === "document" && <FileText size={14} className="text-[var(--color-brand-green)]" />}
-                    </span>
-                    <span className="text-xs font-medium uppercase tracking-wide text-muted">{memory.type}</span>
+            {memories === undefined ? (
+               <div className="py-12 text-center text-muted">Loading...</div>
+            ) : memories.length === 0 ? (
+               <div className="py-12 text-center">
+                 <p className="text-muted">No memories found matching "{search}"</p>
+               </div>
+            ) : (
+              memories.map((memory) => (
+                <div
+                  key={memory._id}
+                  className="group flex flex-col gap-3 rounded-2xl border border-white/5 bg-[var(--bg-card)] p-5 transition hover:border-white/10"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[var(--bg-hover)]">
+                        {memory.source === "fact" && <Brain size={14} className="text-[var(--color-brand-orange)]" />}
+                        {memory.source === "url" && <LinkIcon size={14} className="text-[var(--color-brand-blue)]" />}
+                        {memory.source === "document" && <FileText size={14} className="text-[var(--color-brand-green)]" />}
+                      </span>
+                      <span className="text-xs font-medium uppercase tracking-wide text-muted">{memory.source}</span>
+                    </div>
+                    <span className="text-xs text-muted">{new Date(memory.updatedAt).toLocaleDateString()}</span>
                   </div>
-                  <span className="text-xs text-muted">{memory.createdAt}</span>
-                </div>
 
-                <p className="text-sm leading-relaxed text-[var(--text-primary)]">{memory.content}</p>
+                  <p className="text-sm leading-relaxed text-[var(--text-primary)]">{memory.content}</p>
 
-                <div className="flex flex-wrap gap-2">
-                  {memory.tags.map((tag) => (
-                    <span
-                      key={tag}
-                      className="flex items-center gap-1 rounded-md bg-[var(--bg-hover)] px-2 py-1 text-[10px] text-secondary transition group-hover:text-[var(--text-primary)]"
-                    >
+                  <div className="flex flex-wrap gap-2">
+                    {/* Tags are not yet in documents schema, using title as tag-like or placeholder */}
+                    <span className="flex items-center gap-1 rounded-md bg-[var(--bg-hover)] px-2 py-1 text-[10px] text-secondary transition group-hover:text-[var(--text-primary)]">
                       <Hash size={10} className="text-muted" />
-                      {tag}
+                      {memory.title}
                     </span>
-                  ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-            
-            {filteredMemories.length === 0 && (
-              <div className="py-12 text-center">
-                <p className="text-muted">No memories found matching "{search}"</p>
-              </div>
+              ))
             )}
           </div>
         </div>

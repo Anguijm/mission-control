@@ -1,21 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Save, RotateCcw, Sliders, UserCog, Terminal } from "lucide-react";
 
+const DEFAULT_CONFIG = [
+  { key: "Model Provider", value: "Anthropic" },
+  { key: "Model Name", value: "claude-3-opus-20240229" },
+  { key: "Temperature", value: "0.7" },
+  { key: "Max Tokens", value: "4096" },
+];
+
 export default function SettingsPage() {
+  const agent = useQuery(api.config.get);
+  const updateConfig = useMutation(api.config.update);
+  
   const [isDirty, setIsDirty] = useState(false);
-  const [systemPrompt, setSystemPrompt] = useState(
-    "You are Circus Cruz, a weathered 63-year-old spectacle who exists as a delightful paradox..."
-  );
-  const [config, setConfig] = useState([
-    { key: "Model Provider", value: "Anthropic" },
-    { key: "Model Name", value: "claude-3-opus-20240229" },
-    { key: "Temperature", value: "0.7" },
-    { key: "Max Tokens", value: "4096" },
-    { key: "Memory Depth", value: "20" },
-    { key: "Voice ID", value: "21m00Tcm4TlvDq8ikWAM" },
-  ]);
+  const [systemPrompt, setSystemPrompt] = useState("");
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
+  const [config, setConfig] = useState(DEFAULT_CONFIG);
+
+  useEffect(() => {
+    if (agent) {
+      setSystemPrompt(agent.systemPrompt || "You are an AI agent...");
+      setName(agent.name);
+      setRole(agent.role);
+      if (agent.modelConfig) {
+        try {
+          setConfig(JSON.parse(agent.modelConfig));
+        } catch (e) {
+          console.error("Failed to parse model config", e);
+        }
+      }
+    }
+  }, [agent]);
 
   const handleConfigChange = (index: number, newValue: string) => {
     const newConfig = [...config];
@@ -24,10 +44,19 @@ export default function SettingsPage() {
     setIsDirty(true);
   };
 
-  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setSystemPrompt(e.target.value);
-    setIsDirty(true);
+  const handleSave = async () => {
+    if (!agent) return;
+    await updateConfig({
+      id: agent._id,
+      name,
+      role,
+      systemPrompt,
+      modelConfig: JSON.stringify(config),
+    });
+    setIsDirty(false);
   };
+
+  if (agent === undefined) return <div className="p-10 text-center text-muted">Loading settings...</div>;
 
   return (
     <div className="mx-auto flex max-w-5xl flex-col gap-8">
@@ -49,7 +78,7 @@ export default function SettingsPage() {
             </button>
             <button
               disabled={!isDirty}
-              onClick={() => setIsDirty(false)}
+              onClick={handleSave}
               className="flex items-center gap-2 rounded-xl bg-[var(--color-brand-blue)] px-4 py-2 text-sm font-semibold text-white transition hover:opacity-90 disabled:bg-[var(--bg-elevated)] disabled:text-muted"
             >
               <Save size={16} />
@@ -72,7 +101,7 @@ export default function SettingsPage() {
             <div className="p-1">
               <textarea
                 value={systemPrompt}
-                onChange={handlePromptChange}
+                onChange={(e) => { setSystemPrompt(e.target.value); setIsDirty(true); }}
                 className="min-h-[400px] w-full resize-y rounded-xl border-none bg-[var(--bg-hover)]/30 p-4 font-mono text-sm leading-relaxed text-[var(--text-primary)] outline-none transition focus:bg-[var(--bg-hover)]/50"
                 spellCheck={false}
               />
@@ -95,7 +124,8 @@ export default function SettingsPage() {
                 <label className="text-xs font-medium text-secondary">Name</label>
                 <input
                   type="text"
-                  defaultValue="Circus Cruz"
+                  value={name}
+                  onChange={(e) => { setName(e.target.value); setIsDirty(true); }}
                   className="w-full rounded-lg border border-white/10 bg-[var(--bg-hover)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--color-brand-blue)]/50"
                 />
               </div>
@@ -103,7 +133,8 @@ export default function SettingsPage() {
                 <label className="text-xs font-medium text-secondary">Role</label>
                 <input
                   type="text"
-                  defaultValue="Walrus of Whimsy"
+                  value={role}
+                  onChange={(e) => { setRole(e.target.value); setIsDirty(true); }}
                   className="w-full rounded-lg border border-white/10 bg-[var(--bg-hover)] px-3 py-2 text-sm text-[var(--text-primary)] outline-none focus:border-[var(--color-brand-blue)]/50"
                 />
               </div>

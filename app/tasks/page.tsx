@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import {
   KanbanSquare,
@@ -11,34 +11,19 @@ import {
   CheckCircle2,
   Circle,
   Clock,
-  AlertCircle,
+  ArrowRight,
+  Trash2,
 } from "lucide-react";
 
 type TaskStatus = "todo" | "in-progress" | "done";
-type Priority = "low" | "medium" | "high";
 
-interface Task {
-  id: string;
-  title: string;
-  status: TaskStatus;
-  priority: Priority;
-  tag: string;
-}
-
-const MOCK_TASKS: Task[] = [
-  { id: "1", title: "Review Q1 Strategy", status: "todo", priority: "high", tag: "Strategy" },
-  { id: "2", title: "Update Agent Memory Schema", status: "in-progress", priority: "medium", tag: "Dev" },
-  { id: "3", title: "Sync Notion Docs", status: "done", priority: "low", tag: "Ops" },
-  { id: "4", title: "Write Weekly Brief", status: "todo", priority: "medium", tag: "Content" },
-];
-
-const STATUS_CONFIG = {
+const STATUS_CONFIG: Record<TaskStatus, { label: string; color: string; icon: any }> = {
   todo: { label: "To Do", color: "bg-zinc-800", icon: Circle },
   "in-progress": { label: "In Progress", color: "bg-blue-500/10 text-blue-400", icon: Clock },
   done: { label: "Complete", color: "bg-green-500/10 text-green-400", icon: CheckCircle2 },
 };
 
-const PRIORITY_COLORS = {
+const PRIORITY_COLORS: Record<string, string> = {
   low: "bg-blue-400",
   medium: "bg-yellow-400",
   high: "bg-red-400",
@@ -46,7 +31,32 @@ const PRIORITY_COLORS = {
 
 export default function TasksPage() {
   const [view, setView] = useState<"human" | "agent">("human");
+  const tasks = useQuery(api.kanban.list, {}) || [];
   const activities = useQuery(api.activities.list, { limit: 50 });
+  
+  const createTask = useMutation(api.kanban.create);
+  const updateStatus = useMutation(api.kanban.updateStatus);
+  const deleteTask = useMutation(api.kanban.delete_);
+
+  const handleAddTask = async (status: TaskStatus) => {
+    const title = prompt("Task title:");
+    if (!title) return;
+    await createTask({
+      title,
+      status,
+      priority: "medium",
+      tags: ["General"],
+    });
+  };
+
+  const handleAdvance = async (id: string, currentStatus: string) => {
+    const nextMap: Record<string, string> = {
+      todo: "in-progress",
+      "in-progress": "done",
+      done: "todo",
+    };
+    await updateStatus({ id: id as any, status: nextMap[currentStatus] });
+  };
 
   return (
     <div className="flex h-full flex-col gap-6">
@@ -83,7 +93,7 @@ export default function TasksPage() {
 
       {view === "human" ? (
         <div className="grid h-full grid-cols-1 gap-6 overflow-hidden lg:grid-cols-3">
-          {(["todo", "in-progress", "done"] as TaskStatus[]).map((status) => (
+          {(Object.keys(STATUS_CONFIG) as TaskStatus[]).map((status) => (
             <div key={status} className="flex flex-col gap-4 rounded-2xl border border-white/5 bg-[var(--bg-card)]/50 p-4">
               <div className="flex items-center justify-between px-2">
                 <div className="flex items-center gap-2">
@@ -95,32 +105,52 @@ export default function TasksPage() {
                   </div>
                   <span className="text-sm font-semibold text-secondary">{STATUS_CONFIG[status].label}</span>
                   <span className="ml-2 rounded-full bg-[var(--bg-hover)] px-2 py-0.5 text-xs text-muted">
-                    {MOCK_TASKS.filter((t) => t.status === status).length}
+                    {tasks.filter((t) => t.status === status).length}
                   </span>
                 </div>
-                <button className="text-muted hover:text-white">
+                <button 
+                  onClick={() => handleAddTask(status)}
+                  className="text-muted hover:text-white transition-colors"
+                >
                   <Plus size={16} />
                 </button>
               </div>
 
               <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
-                {MOCK_TASKS.filter((t) => t.status === status).map((task) => (
+                {tasks.filter((t) => t.status === status).map((task) => (
                   <div
-                    key={task.id}
-                    className="group relative flex cursor-pointer flex-col gap-3 rounded-xl border border-white/5 bg-[var(--bg-card)] p-4 shadow-sm transition hover:border-white/10 hover:shadow-md"
+                    key={task._id}
+                    className="group relative flex flex-col gap-3 rounded-xl border border-white/5 bg-[var(--bg-card)] p-4 shadow-sm transition hover:border-white/10 hover:shadow-md"
                   >
                     <div className="flex items-start justify-between">
-                      <span className="text-xs font-medium text-muted">{task.tag}</span>
-                      <button className="opacity-0 transition-opacity group-hover:opacity-100">
-                        <MoreHorizontal size={16} className="text-muted" />
-                      </button>
+                      <div className="flex gap-1">
+                        {task.tags?.map(tag => (
+                          <span key={tag} className="text-[10px] font-medium text-muted bg-[var(--bg-hover)] px-1.5 py-0.5 rounded">{tag}</span>
+                        ))}
+                      </div>
+                      <div className="flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                         <button 
+                            onClick={() => deleteTask({ id: task._id })}
+                            className="text-muted hover:text-red-400"
+                         >
+                            <Trash2 size={14} />
+                         </button>
+                      </div>
                     </div>
                     <p className="text-sm font-medium text-[var(--text-primary)]">{task.title}</p>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className={`h-2 w-2 rounded-full ${PRIORITY_COLORS[task.priority]}`}
-                        title={`Priority: ${task.priority}`}
-                      />
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div
+                          className={`h-2 w-2 rounded-full ${PRIORITY_COLORS[task.priority] ?? "bg-gray-500"}`}
+                          title={`Priority: ${task.priority}`}
+                        />
+                      </div>
+                      <button 
+                        onClick={() => handleAdvance(task._id, task.status)}
+                        className="text-muted hover:text-white"
+                      >
+                        <ArrowRight size={14} />
+                      </button>
                     </div>
                   </div>
                 ))}

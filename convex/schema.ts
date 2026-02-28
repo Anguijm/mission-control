@@ -69,6 +69,8 @@ export default defineSchema({
     cpu: v.optional(v.number()),
     ram: v.optional(v.number()),
     lastSeen: v.number(),
+    systemPrompt: v.optional(v.string()),
+    modelConfig: v.optional(v.string()),
   }).index("by_lastSeen", ["lastSeen"]),
 
   users: defineTable({
@@ -93,4 +95,17 @@ export default defineSchema({
       searchField: "content",
       filterFields: ["source"],
     }),
+
+  content: defineTable({
+    title: v.string(),
+    type: v.string(), // video, post
+    platform: v.string(), // youtube, twitter
+    url: v.string(),
+    thumbnail: v.optional(v.string()),
+    views: v.number(),
+    likes: v.number(),
+    comments: v.optional(v.number()),
+    publishedAt: v.number(),
+    lastSynced: v.number(),
+  }).index("by_published", ["publishedAt"]),
 });
