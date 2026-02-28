@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useQuery } from "convex/react";
+import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
 import {
@@ -65,6 +65,9 @@ export default function CommandCenterPage() {
   const activities = useQuery(api.activities.list, { limit: 20 });
   const tasks = useQuery(api.tasks.list, {});
   const agents = useQuery(api.agents.list, {});
+  const sendHeartbeat = useMutation(api.agents.reportHeartbeat);
+  const syncContent = useMutation(api.content.sync);
+  const runBrief = useMutation(api.actions.runBrief);
 
   const startOfDay = useMemo(() => {
     const d = new Date();
@@ -249,15 +252,34 @@ export default function CommandCenterPage() {
               </div>
             </div>
             <div className="space-y-3">
-              {["Send Heartbeat", "Sync Content", "Run Daily Brief"].map((label) => (
-                <button
-                  key={label}
-                  className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)]"
-                  onClick={() => console.log(`${label} triggered`)}
-                >
-                  {label}
-                </button>
-              ))}
+              <button
+                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)]"
+                onClick={() =>
+                  sendHeartbeat({
+                    name: "Circus Cruz",
+                    role: "Walrus of Whimsy",
+                    emoji: "🦭",
+                    status: "online",
+                    task: "Thinking...",
+                    cpu: 12,
+                    ram: 40,
+                  })
+                }
+              >
+                Send Heartbeat
+              </button>
+              <button
+                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)]"
+                onClick={() => syncContent({ source: "all" })}
+              >
+                Sync Content
+              </button>
+              <button
+                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)]"
+                onClick={() => runBrief({})}
+              >
+                Run Daily Brief
+              </button>
             </div>
           </div>
 
