@@ -34,6 +34,8 @@ export const reportHeartbeat = mutation({
       }
     }
 
+    let targetId: typeof agentId;
+
     if (agentId) {
       await ctx.db.patch(agentId, {
         status: args.status,
@@ -42,9 +44,9 @@ export const reportHeartbeat = mutation({
         ram: args.ram,
         lastSeen: now,
       });
-      return agentId;
+      targetId = agentId;
     } else {
-      return await ctx.db.insert("agents", {
+      targetId = await ctx.db.insert("agents", {
         name: args.name,
         role: args.role,
         emoji: args.emoji,
@@ -55,5 +57,21 @@ export const reportHeartbeat = mutation({
         lastSeen: now,
       });
     }
+
+    await ctx.db.insert("activities", {
+      type: "system",
+      action: "Heartbeat",
+      details: `${args.name} heartbeat (${args.status})` +
+        (args.cpu !== undefined && args.ram !== undefined
+          ? ` — CPU ${args.cpu}% · RAM ${args.ram}%`
+          : ""),
+      timestamp: now,
+      metadata: {
+        agentId: targetId,
+        task: args.task,
+      },
+    });
+
+    return targetId;
   },
 });

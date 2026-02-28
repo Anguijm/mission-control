@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useQuery, useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Link from "next/link";
@@ -68,6 +68,30 @@ export default function CommandCenterPage() {
   const sendHeartbeat = useMutation(api.agents.reportHeartbeat);
   const syncContent = useMutation(api.content.sync);
   const runBrief = useMutation(api.actions.runBrief);
+  const [actionLoading, setActionLoading] = useState<"heartbeat" | "content" | "brief" | null>(null);
+
+  const handleQuickAction = async (type: "heartbeat" | "content" | "brief") => {
+    try {
+      setActionLoading(type);
+      if (type === "heartbeat") {
+        await sendHeartbeat({
+          name: "Circus Cruz",
+          role: "Walrus of Whimsy",
+          emoji: "🦭",
+          status: "online",
+          task: "Thinking...",
+          cpu: Math.round(10 + Math.random() * 20),
+          ram: Math.round(30 + Math.random() * 40),
+        });
+      } else if (type === "content") {
+        await syncContent({ source: "all" });
+      } else if (type === "brief") {
+        await runBrief({});
+      }
+    } finally {
+      setActionLoading(null);
+    }
+  };
 
   const startOfDay = useMemo(() => {
     const d = new Date();
@@ -253,32 +277,25 @@ export default function CommandCenterPage() {
             </div>
             <div className="space-y-3">
               <button
-                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)]"
-                onClick={() =>
-                  sendHeartbeat({
-                    name: "Circus Cruz",
-                    role: "Walrus of Whimsy",
-                    emoji: "🦭",
-                    status: "online",
-                    task: "Thinking...",
-                    cpu: 12,
-                    ram: 40,
-                  })
-                }
+                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)] disabled:opacity-50"
+                disabled={actionLoading !== null}
+                onClick={() => handleQuickAction("heartbeat")}
               >
-                Send Heartbeat
+                {actionLoading === "heartbeat" ? "Sending heartbeat…" : "Send Heartbeat"}
               </button>
               <button
-                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)]"
-                onClick={() => syncContent({ source: "all" })}
+                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)] disabled:opacity-50"
+                disabled={actionLoading !== null}
+                onClick={() => handleQuickAction("content")}
               >
-                Sync Content
+                {actionLoading === "content" ? "Syncing content…" : "Sync Content"}
               </button>
               <button
-                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)]"
-                onClick={() => runBrief({})}
+                className="w-full rounded-xl border border-white/10 bg-[var(--bg-hover)]/60 px-4 py-3 text-left text-sm text-secondary transition hover:border-white/25 hover:text-[var(--text-primary)] disabled:opacity-50"
+                disabled={actionLoading !== null}
+                onClick={() => handleQuickAction("brief")}
               >
-                Run Daily Brief
+                {actionLoading === "brief" ? "Running brief…" : "Run Daily Brief"}
               </button>
             </div>
           </div>
